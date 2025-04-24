@@ -1,76 +1,74 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to Lô Tô Show</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: black;
-      color: white;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
+      background-color: black;
+      color: gold;
+      font-family: 'Arial Black', sans-serif;
       overflow: hidden;
+      text-align: center;
     }
-
-    h1, h2 {
-      margin: 20px 0;
-      font-weight: bold;
-      text-shadow: 0 0 10px #fff, 0 0 20px #ff00ff;
+    .banner {
+      position: relative;
+      z-index: 1;
+      padding: 100px 20px;
     }
-
-    h1 {
-      font-size: 60px;
-      color: #ffcc00;
+    .banner h1 {
+      font-size: 3em;
+      margin: 0.2em 0;
+      animation: glow 2s infinite alternate;
     }
-
-    h2 {
-      font-size: 40px;
-      color: #00ffff;
+    @keyframes glow {
+      from { text-shadow: 0 0 10px gold; }
+      to { text-shadow: 0 0 20px red, 0 0 30px orange; }
     }
-
-    canvas {
+    .firework {
       position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: explode 1.5s ease-out infinite;
+    }
+    @keyframes explode {
+      0% { transform: scale(1) translateY(0); opacity: 1; }
+      100% { transform: scale(0.2) translateY(-150px); opacity: 0; }
+    }
+    audio {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to<br>Lô Tô Show</h1>
-  <h2>Đoàn Lô Tô DataDreamers</h2>
+  <div class="banner">
+    <h1>WELCOME TO</h1>
+    <h1>LÔ TÔ SHOW</h1>
+    <h1>ĐOÀN LÔ TÔ DATADREAMERS</h1>
+  </div>
 
-  <!-- Fireworks Canvas -->
-  <canvas id="fireworks"></canvas>
-
-  <!-- Firework Sound -->
-  <audio id="fireworkSound" autoplay loop>
-    <source src="https://www.soundjay.com/fireworks/fireworks-1.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- Fireworks JS -->
-  <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.9.0/dist/fireworks.js"></script>
+  <!-- Fireworks Simulation -->
   <script>
-    const container = document.body;
-    const fireworks = new Fireworks(container, {
-      rocketsPoint: 50,
-      hue: { min: 0, max: 360 },
-      delay: { min: 15, max: 30 },
-      speed: 2,
-      acceleration: 1.05,
-      friction: 0.95,
-      gravity: 1.5,
-      particles: 90,
-      trace: 3,
-      explosion: 6,
-      autoresize: true,
-      brightness: { min: 50, max: 80 },
-      decay: { min: 0.015, max: 0.03 },
-      mouse: { click: false, move: false, max: 0 }
-    });
-    fireworks.start();
+    function createFirework() {
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      firework.style.left = `${Math.random() * 100}vw`;
+      firework.style.top = `${Math.random() * 100}vh`;
+      firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+      document.body.appendChild(firework);
+      setTimeout(() => document.body.removeChild(firework), 1500);
+    }
+    setInterval(createFirework, 300);
   </script>
+
+  <!-- Background Music -->
+  <audio autoplay loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
 </body>
 </html>
