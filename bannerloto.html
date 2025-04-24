@@ -8,40 +8,40 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      color: gold;
-      font-family: 'Arial Black', sans-serif;
+      background: radial-gradient(circle, #1e002a, #000);
       overflow: hidden;
+      font-family: 'Arial Black', sans-serif;
+      color: #fff;
       text-align: center;
     }
     .banner {
       position: relative;
-      z-index: 1;
-      padding: 100px 20px;
+      z-index: 2;
+      padding: 80px 20px;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 100px;
+      box-shadow: 0 0 30px 10px rgba(255, 255, 0, 0.5);
     }
     .banner h1 {
       font-size: 3em;
-      margin: 0.2em 0;
-      animation: glow 2s infinite alternate;
+      margin: 0.4em 0;
+      animation: neon 1.5s ease-in-out infinite alternate;
     }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px gold; }
-      to { text-shadow: 0 0 20px red, 0 0 30px orange; }
+    @keyframes neon {
+      from {
+        text-shadow: 0 0 10px #f00, 0 0 20px #ff0, 0 0 30px #f0f;
+      }
+      to {
+        text-shadow: 0 0 20px #0ff, 0 0 30px #f0f, 0 0 40px #ff0;
+      }
     }
-    .firework {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: white;
-      border-radius: 50%;
-      animation: explode 1.5s ease-out infinite;
-    }
-    @keyframes explode {
-      0% { transform: scale(1) translateY(0); opacity: 1; }
-      100% { transform: scale(0.2) translateY(-150px); opacity: 0; }
-    }
-    audio {
-      display: none;
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
     }
   </style>
 </head>
@@ -52,23 +52,71 @@
     <h1>ĐOÀN LÔ TÔ DATADREAMERS</h1>
   </div>
 
-  <!-- Fireworks Simulation -->
-  <script>
-    function createFirework() {
-      const firework = document.createElement('div');
-      firework.className = 'firework';
-      firework.style.left = `${Math.random() * 100}vw`;
-      firework.style.top = `${Math.random() * 100}vh`;
-      firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-      document.body.appendChild(firework);
-      setTimeout(() => document.body.removeChild(firework), 1500);
-    }
-    setInterval(createFirework, 300);
-  </script>
-
-  <!-- Background Music -->
-  <audio autoplay loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <audio id="bg-audio" autoplay loop muted>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/30/audio_b2124a6711.mp3?filename=fireworks-115871.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
   </audio>
+
+  <canvas id="fireworksCanvas"></canvas>
+
+  <script>
+    // Fireworks
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    let fireworks = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function createFirework() {
+      const x = Math.random() * canvas.width;
+      const y = canvas.height;
+      const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+      const speed = Math.random() * 3 + 2;
+      fireworks.push({ x, y, color, speed });
+    }
+
+    function drawFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach((fw, index) => {
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = fw.color;
+        ctx.fill();
+        fw.y -= fw.speed;
+        if (fw.y < canvas.height / 2) {
+          fireworks.splice(index, 1);
+        }
+      });
+    }
+
+    setInterval(() => {
+      createFirework();
+    }, 300);
+
+    function animate() {
+      drawFireworks();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Audio autoplay trick
+    const audio = document.getElementById("bg-audio");
+    window.addEventListener("load", () => {
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay bị chặn. Cần người dùng tương tác.");
+        });
+      }
+    });
+  </script>
 </body>
 </html>
